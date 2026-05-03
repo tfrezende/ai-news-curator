@@ -1,7 +1,7 @@
 [project]
 name = "ai-news-curator"
 version = "0.1.0"
-description = "Add your description here"
+description = "A news curator that uses AI to summarize and categorize news articles."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -20,3 +20,51 @@ dev = [
     "pytest>=9.0.3",
     "ruff>=0.15.12",
 ]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes (unused imports, undefined names)
+    "I",    # isort (import ordering)
+    "B",    # flake8-bugbear (common bugs and design issues)
+    "UP",   # pyupgrade (modernize Python syntax)
+    "N",    # pep8 naming conventions
+    "ANN",  # type annotation enforcement
+    "RUF",  # ruff-specific rules
+]
+ignore = [
+    "ANN204",  # don't require return type for __init__
+    "E501",    # line too long — ruff format handles this already
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["ANN"]   # don't enforce type annotations in tests
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+env = [
+    "SQLITE_DB_PATH=./data/test.db",
+    "CHROMA_DB_PATH=./data/test_chroma",
+    "LOG_LEVEL=WARNING",
+]
+markers = [
+    "integration: marks tests that call external APIs (deselect with '-m not integration')",
+    "slow: marks tests that take more than a few seconds",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
