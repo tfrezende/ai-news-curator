@@ -17,6 +17,7 @@ os.environ.setdefault("CHROMA_DB_PATH", "/tmp/test_chroma_ai_news")
 os.environ.setdefault("NEWSAPI_KEY", "test_key")
 os.environ.setdefault("OLLAMA_BASE_URL", "http://localhost:11434")
 os.environ.setdefault("FASTMCP_LOG_LEVEL", "WARNING")
+os.environ.setdefault("LOG_LEVEL", "WARNING")
 
 # ---------------------------------------------------------------------------
 # Mock chromadb at the sys.modules level before src.storage.chroma is

@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     CHROMA_DB_PATH: str | None = None
     SQLITE_DB_PATH: str | None = None
     FASTMCP_LOG_LEVEL: str | None = None
+    LOG_LEVEL: str | None = None
 
     class Config:
         env_file = ".env"

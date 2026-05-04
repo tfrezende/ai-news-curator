@@ -30,7 +30,9 @@ def _make_article(**overrides) -> Article:
 class TestSQLiteStorageInit:
     def test_creates_articles_table(self, storage):
         cursor = storage.conn.cursor()
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='articles'")
+        cursor.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='articles'"
+        )
         result = cursor.fetchone()
         assert result is not None
 
@@ -85,7 +87,9 @@ class TestInsertArticle:
         storage.insert_article(article)
 
         cursor = storage.conn.cursor()
-        cursor.execute("SELECT summary, raw_text FROM articles WHERE id = ?", (article.id,))
+        cursor.execute(
+            "SELECT summary, raw_text FROM articles WHERE id = ?", (article.id,)
+        )
         row = cursor.fetchone()
         assert row["summary"] is None
         assert row["raw_text"] is None
@@ -131,7 +135,10 @@ class TestGetRecentArticles:
     def test_limit_is_respected(self, storage):
         for i in range(5):
             storage.insert_article(
-                _make_article(url=f"https://example.com/{i}", published_at=datetime(2024, 1, i + 1))
+                _make_article(
+                    url=f"https://example.com/{i}",
+                    published_at=datetime(2024, 1, i + 1),
+                )
             )
         results = storage.get_recent_articles(limit=3)
         assert len(results) == 3
@@ -159,8 +166,14 @@ class TestGetRecentArticles:
         cursor.execute(
             "INSERT INTO articles (id, title, url, source, published_at, fetched_at, topics) "
             "VALUES (?, ?, ?, ?, ?, ?, NULL)",
-            ("null-topics-id", "Null Topics", "https://example.com/null", "S",
-             "2024-01-01T00:00:00", "2024-01-01T00:00:00"),
+            (
+                "null-topics-id",
+                "Null Topics",
+                "https://example.com/null",
+                "S",
+                "2024-01-01T00:00:00",
+                "2024-01-01T00:00:00",
+            ),
         )
         storage.conn.commit()
 

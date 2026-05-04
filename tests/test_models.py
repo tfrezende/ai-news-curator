@@ -149,4 +149,6 @@ class TestArticleFullConstruction:
 
     def test_required_field_missing_raises_validation_error(self):
         with pytest.raises(Exception):
-            Article(url="https://example.com", source="S", published_at=datetime(2024, 1, 1))  # missing title
+            Article(
+                url="https://example.com", source="S", published_at=datetime(2024, 1, 1)
+            )  # missing title

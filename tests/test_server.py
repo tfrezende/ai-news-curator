@@ -52,7 +52,12 @@ class TestHealthCheck:
 
     def test_return_value_contains_all_expected_keys(self):
         result = health_check()
-        assert set(result.keys()) == {"status", "message", "sqlite_status", "chroma_status"}
+        assert set(result.keys()) == {
+            "status",
+            "message",
+            "sqlite_status",
+            "chroma_status",
+        }
 
 
 class TestMainBlock:

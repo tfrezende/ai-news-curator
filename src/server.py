@@ -1,8 +1,15 @@
+import logging
+
 from fastmcp import FastMCP
 
 from src.config import settings
 from src.storage.chroma import ChromaStorage
 from src.storage.sqlite import SQLiteStorage
+
+logging.basicConfig(
+    level=settings.LOG_LEVEL or "INFO",
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+)
 
 sql_storage = SQLiteStorage(db_path=settings.SQLITE_DB_PATH)
 chroma_storage = ChromaStorage(db_path=settings.CHROMA_DB_PATH)

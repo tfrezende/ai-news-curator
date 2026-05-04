@@ -38,7 +38,9 @@ def chroma_storage(mock_client, monkeypatch):
     """Return a ChromaStorage instance backed by mocked chromadb."""
     import src.storage.chroma as chroma_module
 
-    monkeypatch.setattr(chroma_module.chromadb, "PersistentClient", lambda path: mock_client)
+    monkeypatch.setattr(
+        chroma_module.chromadb, "PersistentClient", lambda path: mock_client
+    )
     storage = ChromaStorage(db_path="/tmp/test_chroma")
     return storage
 
@@ -46,6 +48,7 @@ def chroma_storage(mock_client, monkeypatch):
 class TestChromaStorageInit:
     def test_creates_collection_on_init(self, mock_client):
         import src.storage.chroma as chroma_module
+
         mock_client.get_or_create_collection.return_value = MagicMock()
 
         storage = ChromaStorage.__new__(ChromaStorage)
@@ -57,14 +60,18 @@ class TestChromaStorageInit:
     def test_default_collection_name_is_articles(self, mock_client, monkeypatch):
         import src.storage.chroma as chroma_module
 
-        monkeypatch.setattr(chroma_module.chromadb, "PersistentClient", lambda path: mock_client)
+        monkeypatch.setattr(
+            chroma_module.chromadb, "PersistentClient", lambda path: mock_client
+        )
         ChromaStorage(db_path="/tmp/test")
         mock_client.get_or_create_collection.assert_called_with(name="articles")
 
     def test_custom_collection_name(self, mock_client, monkeypatch):
         import src.storage.chroma as chroma_module
 
-        monkeypatch.setattr(chroma_module.chromadb, "PersistentClient", lambda path: mock_client)
+        monkeypatch.setattr(
+            chroma_module.chromadb, "PersistentClient", lambda path: mock_client
+        )
         ChromaStorage(db_path="/tmp/test", collection_name="custom")
         mock_client.get_or_create_collection.assert_called_with(name="custom")
 
@@ -87,7 +94,9 @@ class TestInsertArticle:
         _, kwargs = mock_collection.add.call_args
         assert kwargs["documents"] == ["This is raw text."]
 
-    def test_insert_uses_empty_string_when_raw_text_is_none(self, chroma_storage, mock_collection):
+    def test_insert_uses_empty_string_when_raw_text_is_none(
+        self, chroma_storage, mock_collection
+    ):
         article = _make_article(raw_text=None)
         chroma_storage.insert_article(article)
         _, kwargs = mock_collection.add.call_args
@@ -114,7 +123,9 @@ class TestInsertArticle:
         assert json.loads(metadata["topics"]) == ["a", "b"]
         assert metadata["published_at"] == published.isoformat()
 
-    def test_insert_uses_empty_string_when_summary_is_none(self, chroma_storage, mock_collection):
+    def test_insert_uses_empty_string_when_summary_is_none(
+        self, chroma_storage, mock_collection
+    ):
         article = _make_article(summary=None)
         chroma_storage.insert_article(article)
         _, kwargs = mock_collection.add.call_args
@@ -139,7 +150,9 @@ class TestSearchArticles:
         self._setup_query_result(
             mock_collection,
             ids=["id1"],
-            metadatas=[{"title": "T1", "url": "http://u1", "source": "S1", "summary": "Sum1"}],
+            metadatas=[
+                {"title": "T1", "url": "http://u1", "source": "S1", "summary": "Sum1"}
+            ],
             distances=[0.2],
         )
         results = chroma_storage.search_articles("test query")
@@ -150,7 +163,14 @@ class TestSearchArticles:
         self._setup_query_result(
             mock_collection,
             ids=["abc123"],
-            metadatas=[{"title": "Article A", "url": "https://a.com", "source": "SrcA", "summary": "Sum A"}],
+            metadatas=[
+                {
+                    "title": "Article A",
+                    "url": "https://a.com",
+                    "source": "SrcA",
+                    "summary": "Sum A",
+                }
+            ],
             distances=[0.1],
         )
         result = chroma_storage.search_articles("query")[0]
@@ -173,17 +193,31 @@ class TestSearchArticles:
         assert result["score"] == round(1 - 0.33333, 3)
 
     def test_search_passes_n_results_to_query(self, chroma_storage, mock_collection):
-        mock_collection.query.return_value = {"ids": [[]], "metadatas": [[]], "distances": [[]]}
+        mock_collection.query.return_value = {
+            "ids": [[]],
+            "metadatas": [[]],
+            "distances": [[]],
+        }
         chroma_storage.search_articles("q", n_results=5)
         mock_collection.query.assert_called_once_with(query_texts=["q"], n_results=5)
 
     def test_search_default_n_results_is_10(self, chroma_storage, mock_collection):
-        mock_collection.query.return_value = {"ids": [[]], "metadatas": [[]], "distances": [[]]}
+        mock_collection.query.return_value = {
+            "ids": [[]],
+            "metadatas": [[]],
+            "distances": [[]],
+        }
         chroma_storage.search_articles("q")
         mock_collection.query.assert_called_once_with(query_texts=["q"], n_results=10)
 
-    def test_search_returns_empty_list_when_no_results(self, chroma_storage, mock_collection):
-        mock_collection.query.return_value = {"ids": [[]], "metadatas": [[]], "distances": [[]]}
+    def test_search_returns_empty_list_when_no_results(
+        self, chroma_storage, mock_collection
+    ):
+        mock_collection.query.return_value = {
+            "ids": [[]],
+            "metadatas": [[]],
+            "distances": [[]],
+        }
         results = chroma_storage.search_articles("nothing")
         assert results == []
 

@@ -9,7 +9,14 @@ class TestSettingsDefaults:
     """Settings fields default to None when no env vars are set."""
 
     def test_all_fields_default_to_none(self, monkeypatch):
-        for key in ("NEWSAPI_KEY", "OLLAMA_BASE_URL", "CHROMA_DB_PATH", "SQLITE_DB_PATH", "FASTMCP_LOG_LEVEL"):
+        for key in (
+            "NEWSAPI_KEY",
+            "OLLAMA_BASE_URL",
+            "CHROMA_DB_PATH",
+            "SQLITE_DB_PATH",
+            "FASTMCP_LOG_LEVEL",
+            "LOG_LEVEL",
+        ):
             monkeypatch.delenv(key, raising=False)
 
         s = Settings(_env_file=None)
@@ -19,6 +26,7 @@ class TestSettingsDefaults:
         assert s.CHROMA_DB_PATH is None
         assert s.SQLITE_DB_PATH is None
         assert s.FASTMCP_LOG_LEVEL is None
+        assert s.LOG_LEVEL is None
 
 
 class TestSettingsFromEnv:
@@ -49,6 +57,12 @@ class TestSettingsFromEnv:
         s = Settings(_env_file=None)
         assert s.FASTMCP_LOG_LEVEL == "DEBUG"
 
+    def test_log_level_loaded_from_env(self, monkeypatch):
+        monkeypatch.setenv("LOG_LEVEL", "ERROR")
+        s = Settings(_env_file=None)
+        assert s.LOG_LEVEL == "ERROR"
+
     def test_module_level_settings_instance_exists(self):
         from src.config import settings
+
         assert isinstance(settings, Settings)

@@ -75,8 +75,10 @@ class ChromaStorage:
                 "score": round(1 - distance, 3),
             }
             for result_id, metadata, distance in zip(
-                results["ids"][0], results["metadatas"][0], results["distances"][0],
-                strict=False
+                results["ids"][0],
+                results["metadatas"][0],
+                results["distances"][0],
+                strict=False,
             )
         ]
 
