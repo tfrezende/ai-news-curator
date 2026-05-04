@@ -58,8 +58,8 @@ python_files = ["test_*.py"]
 python_functions = ["test_*"]
 addopts = "-v --tb=short --cov=src --cov-report=term-missing --cov-fail-under=100"
 env = [
-    "SQLITE_DB_PATH=./data/test.db",
-    "CHROMA_DB_PATH=./data/test_chroma",
+    "SQLITE_DB_PATH=:memory:",
+    "CHROMA_DB_PATH=/tmp/test_chroma_ai_news",
     "LOG_LEVEL=WARNING",
 ]
 markers = [
