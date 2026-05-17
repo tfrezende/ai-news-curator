@@ -1,5 +1,6 @@
 import json
 import sqlite3
+import threading
 from datetime import datetime
 
 from src.models import Article
@@ -27,9 +28,15 @@ class SQLiteStorage:
             db_path (str): The file path to the SQLite database.
         """
         self.db_path = db_path
-        self.conn = sqlite3.connect(db_path)
-        self.conn.row_factory = sqlite3.Row
+        self._local = threading.local()
         self._initialize_db()
+
+    @property
+    def conn(self) -> sqlite3.Connection:
+        if not hasattr(self._local, "conn"):
+            self._local.conn = sqlite3.connect(self.db_path)
+            self._local.conn.row_factory = sqlite3.Row
+        return self._local.conn
 
     def _initialize_db(self) -> None:
         """
@@ -94,6 +101,37 @@ class SQLiteStorage:
         )
         count = cursor.fetchone()[0]
         return count > 0
+    
+    def get_article_by_id(self, article_id: str) -> Article | None:
+        """
+        Retrieves an article from the database by its ID.
+        Args:
+            article_id (str): The ID of the article to retrieve.
+        Returns:
+            Article | None: The Article object if found, or None if no article with the given ID exists in the database.
+        """
+        cursor = self.conn.cursor()
+        cursor.execute(
+            """
+            SELECT id, title, url, source, published_at, fetched_at, summary, raw_text, topics FROM articles
+            WHERE id = ?
+        """,
+            (article_id,),
+        )
+        row = cursor.fetchone()
+        if row:
+            return Article(
+                id=row["id"],
+                title=row["title"],
+                url=row["url"],
+                source=row["source"],
+                published_at=datetime.fromisoformat(row["published_at"]),
+                fetched_at=datetime.fromisoformat(row["fetched_at"]),
+                summary=row["summary"],
+                raw_text=row["raw_text"],
+                topics=json.loads(row["topics"]) if row["topics"] else [],
+            )
+        return None
 
     def get_recent_articles(self, limit: int = 10) -> list[Article]:
         """
@@ -130,6 +168,8 @@ class SQLiteStorage:
 
     def close(self) -> None:
         """
-        Closes the database connection.
+        Closes the database connection for the current thread.
         """
-        self.conn.close()
+        if hasattr(self._local, "conn"):
+            self._local.conn.close()
+            del self._local.conn

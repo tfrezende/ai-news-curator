@@ -181,6 +181,51 @@ class TestGetRecentArticles:
         assert results["null-topics-id"].topics == []
 
 
+class TestGetArticleById:
+    def test_returns_article_when_found(self, storage):
+        article = _make_article(
+            title="By ID",
+            url="https://example.com/byid",
+            summary="Summary",
+            raw_text="Raw",
+            topics=["a", "b"],
+        )
+        storage.insert_article(article)
+        result = storage.get_article_by_id(article.id)
+
+        assert result is not None
+        assert isinstance(result, Article)
+        assert result.id == article.id
+        assert result.title == "By ID"
+        assert result.summary == "Summary"
+        assert result.raw_text == "Raw"
+        assert result.topics == ["a", "b"]
+
+    def test_returns_none_when_not_found(self, storage):
+        assert storage.get_article_by_id("does-not-exist") is None
+
+    def test_returns_article_with_correct_datetime_types(self, storage):
+        article = _make_article(url="https://example.com/dt")
+        storage.insert_article(article)
+        result = storage.get_article_by_id(article.id)
+
+        assert isinstance(result.published_at, datetime)
+        assert isinstance(result.fetched_at, datetime)
+
+    def test_returns_empty_topics_when_null(self, storage):
+        cursor = storage.conn.cursor()
+        cursor.execute(
+            "INSERT INTO articles (id, title, url, source, published_at, fetched_at, topics) "
+            "VALUES (?, ?, ?, ?, ?, ?, NULL)",
+            ("null-id", "T", "https://example.com/null2", "S",
+             "2024-01-01T00:00:00", "2024-01-01T00:00:00"),
+        )
+        storage.conn.commit()
+
+        result = storage.get_article_by_id("null-id")
+        assert result.topics == []
+
+
 class TestClose:
     def test_close_does_not_raise(self):
         store = SQLiteStorage(db_path=":memory:")
