@@ -217,8 +217,14 @@ class TestGetArticleById:
         cursor.execute(
             "INSERT INTO articles (id, title, url, source, published_at, fetched_at, topics) "
             "VALUES (?, ?, ?, ?, ?, ?, NULL)",
-            ("null-id", "T", "https://example.com/null2", "S",
-             "2024-01-01T00:00:00", "2024-01-01T00:00:00"),
+            (
+                "null-id",
+                "T",
+                "https://example.com/null2",
+                "S",
+                "2024-01-01T00:00:00",
+                "2024-01-01T00:00:00",
+            ),
         )
         storage.conn.commit()
 

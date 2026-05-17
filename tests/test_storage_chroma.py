@@ -2,7 +2,7 @@
 
 import json
 from datetime import datetime
-from unittest.mock import MagicMock, call
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -47,7 +47,6 @@ def chroma_storage(mock_client, monkeypatch):
 
 class TestChromaStorageInit:
     def test_creates_collection_on_init(self, mock_client):
-        import src.storage.chroma as chroma_module
 
         mock_client.get_or_create_collection.return_value = MagicMock()
 

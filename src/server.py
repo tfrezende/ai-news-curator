@@ -8,10 +8,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from fastmcp import FastMCP
 
 from src.config import settings
+from src.pipeline.ingest import IngestPipeline
+from src.services.news_service import NewsService
 from src.storage.chroma import ChromaStorage
 from src.storage.sqlite import SQLiteStorage
-from src.services.news_service import NewsService
-from src.pipeline.ingest import IngestPipeline
 
 logging.basicConfig(
     level=settings.LOG_LEVEL or "INFO",
@@ -85,6 +85,7 @@ def run_ingestion() -> None:
     logger.info("Running news ingestion pipeline...")
     ingest_pipeline.run()
     logger.info("News ingestion pipeline completed.")
+
 
 if __name__ == "__main__":
     mcp.run()

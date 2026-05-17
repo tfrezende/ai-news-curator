@@ -4,7 +4,7 @@ import runpy
 from unittest.mock import MagicMock, patch
 
 import src.server as server_module
-from src.server import health_check, search_news, get_article, get_latest_articles
+from src.server import get_article, get_latest_articles, health_check, search_news
 
 
 class TestHealthCheck:
@@ -73,7 +73,9 @@ class TestMainBlock:
 class TestSearchNews:
     def test_delegates_to_news_service(self):
         expected = [{"id": "x", "title": "T"}]
-        with patch.object(server_module.news_service, "search_news", return_value=expected) as mock:
+        with patch.object(
+            server_module.news_service, "search_news", return_value=expected
+        ) as mock:
             result = search_news("AI")
         mock.assert_called_once_with("AI")
         assert result == expected
@@ -82,7 +84,9 @@ class TestSearchNews:
 class TestGetArticle:
     def test_delegates_to_news_service(self):
         expected = {"id": "abc", "title": "Article"}
-        with patch.object(server_module.news_service, "get_article", return_value=expected) as mock:
+        with patch.object(
+            server_module.news_service, "get_article", return_value=expected
+        ) as mock:
             result = get_article("abc")
         mock.assert_called_once_with("abc")
         assert result == expected
@@ -91,7 +95,9 @@ class TestGetArticle:
 class TestGetLatestArticles:
     def test_delegates_to_news_service(self):
         expected = [{"id": "1"}, {"id": "2"}]
-        with patch.object(server_module.news_service, "get_latest_articles", return_value=expected) as mock:
+        with patch.object(
+            server_module.news_service, "get_latest_articles", return_value=expected
+        ) as mock:
             result = get_latest_articles()
         mock.assert_called_once()
         assert result == expected

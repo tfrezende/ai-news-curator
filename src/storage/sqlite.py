@@ -101,7 +101,7 @@ class SQLiteStorage:
         )
         count = cursor.fetchone()[0]
         return count > 0
-    
+
     def get_article_by_id(self, article_id: str) -> Article | None:
         """
         Retrieves an article from the database by its ID.

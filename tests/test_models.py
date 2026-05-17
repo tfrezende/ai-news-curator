@@ -20,7 +20,7 @@ class TestArticleIdGeneration:
         )
 
         expected_id = hashlib.sha256(
-            "https://example.com/news/1".encode("utf-8")
+            b"https://example.com/news/1"
         ).hexdigest()
         assert article.id == expected_id
 
@@ -148,7 +148,9 @@ class TestArticleFullConstruction:
         assert Article(**kwargs).id == Article(**kwargs).id
 
     def test_required_field_missing_raises_validation_error(self):
-        with pytest.raises(Exception):
+        from pydantic import ValidationError
+
+        with pytest.raises(ValidationError):
             Article(
                 url="https://example.com", source="S", published_at=datetime(2024, 1, 1)
             )  # missing title

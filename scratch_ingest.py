@@ -1,9 +1,10 @@
 # scratch_ingest.py  ← add to .gitignore, delete when done
 import logging
+
 from src.config import settings
-from src.storage.sqlite import SQLiteStorage
-from src.storage.chroma import ChromaStorage
 from src.pipeline.ingest import IngestPipeline
+from src.storage.chroma import ChromaStorage
+from src.storage.sqlite import SQLiteStorage
 
 logging.basicConfig(
     level="INFO", format="%(asctime)s | %(levelname)s | %(name)s | %(message)s"

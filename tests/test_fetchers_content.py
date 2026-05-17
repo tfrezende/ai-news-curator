@@ -4,7 +4,6 @@ import logging
 from unittest.mock import MagicMock, patch
 
 import httpx
-import pytest
 
 from src.fetchers.content import fetch_article_content
 

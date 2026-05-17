@@ -1,6 +1,5 @@
 """Unit tests for the Settings configuration (src/config.py)."""
 
-import os
 
 from src.config import Settings
 
